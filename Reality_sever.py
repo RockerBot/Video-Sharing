@@ -12,13 +12,16 @@ streams = {} # ip: video data
 
 def broadcast_stream():
     while running:
-        for frm_client in clients:
-            if not (stream:=streams.get(frm_client)):continue
+        c_keys = [i for i in clients.keys()]
+        # print(len(c_keys))
+        for frm_client in c_keys:
+            if (stream:=streams.get(frm_client)) is None: continue
             a = pickle.dumps(stream)
             message = struct.pack("Q", len(a))+a
             for to_client in clients:
                 if to_client is frm_client: continue
                 clients[to_client].sendall(message)
+                print(message)
 
 
 def manage_client(client_sckt, client_address,/):

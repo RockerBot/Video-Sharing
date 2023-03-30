@@ -18,8 +18,8 @@ sender_sckt.listen(5)
 print('Socket now listening')
 
 while True:
-    client_socket, addr = sender_sckt.accept()
-    print('Connection from:', addr)
+    # client_socket, addr = sender_sckt.accept()
+    # print('Connection from:', addr)
     if client_socket:
         vid = cv.VideoCapture(0)
         while vid.isOpened():

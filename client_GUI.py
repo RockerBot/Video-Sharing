@@ -2,7 +2,9 @@ import socket
 import cv2 as cv
 import pygame
 import time
+import struct
 from pygame import gfxdraw
+import pickle
 
 running = True
 dt = 0
@@ -20,7 +22,7 @@ try:
     # server_conn_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     client_socket.connect((serv_ip, port))
     print("Connected!")
-    print(client_socket.recv(1024))
+    print(client_socket.recv(1024).decode())
 except TimeoutError as te:
     print("Server Inactive")
     quit(-1)
@@ -67,13 +69,20 @@ while running:
         pygame.draw.rect(screen,"#023047",[(streamBoxIndex*streamxOffs)+20,100,150,150],border_radius=15)
         screen.blit(boldFont.render(clientName[streamBoxIndex], True, (255,255,255)),((streamBoxIndex*streamxOffs)+30 + len(clientName[streamBoxIndex])/2,150))
         streamBoxIndex += 1
-
-    if(n == 0 and i<5):
-            availStream[f'192.168.{i}.10'] = f"G{i}-PC"
-            i = i+1
-            n = 100
-    else:
-        n = n-1
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONUP:
+            # while True:
+            if client_socket:
+                vid = cv.VideoCapture(0)
+                while vid.isOpened():
+                    img, frame = vid.read()
+                    a = pickle.dumps(frame)
+                    message = struct.pack("Q?", len(a),bool(client_socket))+a
+                    client_socket.sendall(message)
+                    cv.imshow('Sending...', frame)
+                    key = cv.waitKey(10)
+                    if key == 13:
+                        client_socket.close()
     pygame.display.flip()
 
     dt = clock.tick(60) / 1000
