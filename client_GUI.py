@@ -9,7 +9,7 @@ dt = 0
 
 # serv_ip = input("Enter Server IP: ") # Original
 # serv_ip = socket.gethostbyname(socket.gethostname()) # Tempo
-serv_ip = "192.168.56.1"
+serv_ip = "192.168.1.6"
 
 print(f"Connecting to {serv_ip}...")
 
@@ -17,9 +17,10 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 port = 10050
 
 try:
-    server_conn_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # server_conn_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     client_socket.connect((serv_ip, port))
     print("Connected!")
+    print(client_socket.recv(1024))
 except TimeoutError as te:
     print("Server Inactive")
     quit(-1)
@@ -36,6 +37,9 @@ height = screen.get_height()
 
 # availStream = ['192.168.1.10']
 availStream = {'192.168.1.10':'RED-PC','192.168.2.10':'BLUE-PC'}
+
+n = 100
+i = 3
 
 while running:
     clientIP = [x for x in availStream.keys()]
@@ -64,6 +68,12 @@ while running:
         screen.blit(boldFont.render(clientName[streamBoxIndex], True, (255,255,255)),((streamBoxIndex*streamxOffs)+30 + len(clientName[streamBoxIndex])/2,150))
         streamBoxIndex += 1
 
+    if(n == 0 and i<5):
+            availStream[f'192.168.{i}.10'] = f"G{i}-PC"
+            i = i+1
+            n = 100
+    else:
+        n = n-1
     pygame.display.flip()
 
     dt = clock.tick(60) / 1000
