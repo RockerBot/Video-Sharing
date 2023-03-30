@@ -14,7 +14,7 @@ def broadcast_stream():
     while running:
         for frm_client in clients:
             if not (stream:=streams.get(frm_client)):continue
-            a = pickle.dumps(streams[frm_client])
+            a = pickle.dumps(stream)
             message = struct.pack("Q", len(a))+a
             for to_client in clients:
                 if to_client is frm_client: continue
