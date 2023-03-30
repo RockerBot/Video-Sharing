@@ -13,6 +13,7 @@ streams = {} # ip: video data
 def broadcast_stream():
     while running:
         for frm_client in clients:
+            if not (stream:=streams.get(frm_client)):continue
             a = pickle.dumps(streams[frm_client])
             message = struct.pack("Q", len(a))+a
             for to_client in clients:
